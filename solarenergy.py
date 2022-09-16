@@ -1,5 +1,5 @@
 import requests
-import secrets
+import secret_values as secrets
 from datetime import datetime, timedelta
 from base64 import b64encode
 
@@ -39,7 +39,8 @@ def auth_octopus():
     return
 
 def auth_enphase(refresh_token=None):
-    BASEURL = "https://api.enphaseenergy.com/oauth"
+    print(secrets)
+    EBASEURL = "https://api.enphaseenergy.com/oauth"
     authurl = f"{EBASEURL}/authorize?response_type=code&client_id={secrets.enphase_client_id}&redirect_uri=https://www.zemogle.net"
 
     message = f'{secrets.enphase_client_id}:{secrets.enphase_client_secret}'
@@ -50,7 +51,7 @@ def auth_enphase(refresh_token=None):
     if refresh_token:
         url = f"{EBASEURL}/token?grant_type=refresh_token&refresh_token={refresh_token}"
     else:
-        url = f"{EBASEURL}/token?grant_type=authorization_code&redirect_uri=https://www.zemogle.net&code=h5kRbI"
+        url = f"{EBASEURL}/token?grant_type=authorization_code&redirect_uri=https://www.zemogle.net&code=Yt3O56"
     r = requests.post(url, headers=headers)
     token = r.json()['access_token']
     refresh_token = r.json()['refresh_token']
