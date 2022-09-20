@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Solar Monitoring{% endblock %}
+
+{% block pagetitle %}Solar Monitoring{% endblock %}
+
+{% block content %}
+<table class="table">
+  <tr>
+    <td>Battery</td>
+    <td>{{battery.battery}} %</td>
+  </tr>
+  <tr>
+    <td>Grid Used</td>
+    <td>{{battery.grid}} KWh</td>
+  </tr>
+  <tr>
+    <td>Production</td>
+    <td>{{panels.today}} KWh</td>
+  </tr>
+  <tr>
+    <td>Current</td>
+    <td>{{panels.current}} KW</td>
+  </tr>
+  <tr>
+    <td>Export</td>
+    <td>{{exported}} KWh</td>
+  </tr>
+</table>
+{% endblock %}

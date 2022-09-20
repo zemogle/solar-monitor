@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Add a New Key {% endblock %}</h1>
+    <a href="{{link}}">Auth Link</a>
+    <form method="post">
+        <label for="title">Key</label>
+        <br>
+        <input type="text" name="key"
+               placeholder="Message key"
+               value="{{ request.form['key'] }}"></input>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
