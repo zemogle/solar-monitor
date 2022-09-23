@@ -40,8 +40,13 @@ def auth_octopus():
     baseurl = f"https://api.octopus.energy/v1/electricity-meter-points/{secrets.octopus_mpan}/meters/{secrets.octopus_serial}/consumption/"
     total = f"{baseurl}?period_from={yesterday}T00:00:00&group_by=day"
     r = requests.get(total, auth=(secrets.octopus_key,''))
-    logging.debug(f"Yesterday export - {r.json()['results'][1]['consumption']} KWh")
-    return r.json()['results'][1]['consumption']
+    if not r.status_code == 200:
+        return False
+    try:
+        logging.debug(f"Yesterday export - {r.json()['results'][1]['consumption']} KWh")
+        return r.json()['results'][1]['consumption']
+    except IndexError:
+        return "API error"
 
 def save_tokens(token, refresh_token):
     with open('token.json','w') as fp:
@@ -82,8 +87,6 @@ def enphase_summary(token):
     headers = {'Authorization': f'Bearer {token}'}
     summaryurl = f"https://api.enphaseenergy.com/api/v4/systems/{secrets.enphase_system_id}/summary?key={secrets.enphase_api_key}"
     r = requests.get(summaryurl, headers=headers)
-    print(summaryurl)
-    print(headers)
     if r.status_code != 200:
         logging.error(r.content)
         return False
@@ -113,4 +116,4 @@ def summary():
     return battery, panels, exported
 
 if __name__ == '__summary__':
-    main()
+    battery, panels, exported = summary()
