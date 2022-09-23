@@ -124,7 +124,7 @@ def display_inky():
 
     inkyphat.set_colour("black")
     inkyphat.set_border(inkyphat.BLACK)
-    # inkyphat.set_rotation(180)
+    inkyphat.set_rotation(180)
     inkyphat.rectangle((0, 0, inkyphat.WIDTH, inkyphat.HEIGHT), fill=inkyphat.WHITE)
     font = inkyphat.ImageFont.truetype(inkyphat.fonts.FredokaOne, 14)
 
