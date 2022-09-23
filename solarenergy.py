@@ -6,7 +6,7 @@ import json
 
 import logging
 
-logging.basicConfig(level=logging.DEBUG, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 
 # ENPHASE_APP_KEY = os.environ['ENPHASE_APP_KEY']
 # ENPHASE_USER_ID = os.environ['ENPHASE_USER_ID']
@@ -29,8 +29,8 @@ def auth_sunsynk():
 def stats_sunsynk(headers):
     today = datetime.utcnow().strftime("%Y-%m-%d")
     r = requests.get(currentstats+today, headers=headers)
-    logging.debug(f"Battery - {r.json()['data']['soc']} %")
-    logging.debug(f"Grid Use - {r.json()['data']['gridOrMeterPower']} W")
+    logging.info(f"Battery - {r.json()['data']['soc']} %")
+    logging.info(f"Grid Use - {r.json()['data']['gridOrMeterPower']} W")
     return {'battery':r.json()['data']['soc'], 'grid':r.json()['data']['gridOrMeterPower']}
 
 
@@ -43,7 +43,7 @@ def auth_octopus():
     if not r.status_code == 200:
         return False
     try:
-        logging.debug(f"Yesterday export - {r.json()['results'][1]['consumption']} KWh")
+        logging.info(f"Yesterday export - {r.json()['results'][1]['consumption']} KWh")
         return r.json()['results'][1]['consumption']
     except IndexError:
         return "API error"
@@ -90,15 +90,15 @@ def enphase_summary(token):
     if r.status_code != 200:
         logging.error(r.content)
         return False
-    logging.debug(f"Production today {r.json()['energy_today']/1000:.2f} KWh")
-    logging.debug(f"Current power {r.json()['current_power']/1000:.2f} KW")
+    logging.info(f"Production today {r.json()['energy_today']/1000:.2f} KWh")
+    logging.info(f"Current power {r.json()['current_power']/1000:.2f} KW")
     return {'today':r.json()['energy_today']/1000, 'current' : r.json()['current_power']/1000}
 
 def enphase_aggregate(token):
     headers = {'Authorization': f'Bearer {token}'}
     summaryurl = f"https://api.enphaseenergy.com/api/v4/systems/{secrets.enphase_system_id}/telemetry/production_micro?key={secrets.enphase_api_key}"
     r = requests.get(summaryurl, headers=headers)
-    logging.debug(r.json())
+    logging.info(r.json())
     return
 
 def summary():
@@ -115,5 +115,31 @@ def summary():
     exported = auth_octopus()
     return battery, panels, exported
 
-if __name__ == '__summary__':
+def display_inky():
+    import inkyphat
     battery, panels, exported = summary()
+
+    data = [
+        f"Battery {battery['battery']}",
+        f"Grid Use {battery['grid']}",
+        f"Current {panels['current']}",
+        f"Total {panels['today']}",
+        f"Export {exported}"
+    ]
+
+    inkyphat.set_colour("black")
+    inkyphat.set_border(inkyphat.BLACK)
+    # inkyphat.set_rotation(180)
+    inkyphat.rectangle((0, 0, inkyphat.WIDTH, inkyphat.HEIGHT), fill=inkyphat.BLACK)
+    font = inkyphat.ImageFont.truetype(inkyphat.fonts.FredokaOne, 12)
+
+    offset_x, offset_y = 10, 0
+    for text in data:
+        inkyphat.text((offset_x, offset_y), text, inkyphat.WHITE, font=font)
+        offset_y += font.getsize(text)[1] + 2
+    inkyphat.show()
+    return
+
+
+if __name__ == '__summary__':
+    display_inky()
