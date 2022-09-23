@@ -8,11 +8,6 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 
-# ENPHASE_APP_KEY = os.environ['ENPHASE_APP_KEY']
-# ENPHASE_USER_ID = os.environ['ENPHASE_USER_ID']
-# ENPHASE_SYSTEM_ID = os.environ['ENPHASE_SYSTEM_ID']
-
-
 BASEURL = "https://pv.inteless.com"
 
 resource = f"{BASEURL}/oauth/token"
@@ -120,26 +115,26 @@ def display_inky():
     battery, panels, exported = summary()
 
     data = [
-        f"Battery {battery['battery']}",
-        f"Grid Use {battery['grid']}",
-        f"Current {panels['current']}",
-        f"Total {panels['today']}",
-        f"Export {exported}"
+        f"Battery {battery['battery']} %",
+        f"Grid Use {battery['grid']} KW",
+        f"Current {panels['current']} KW",
+        f"Total {panels['today']} KWh",
+        f"Export {exported} KWh"
     ]
 
     inkyphat.set_colour("black")
     inkyphat.set_border(inkyphat.BLACK)
     # inkyphat.set_rotation(180)
-    inkyphat.rectangle((0, 0, inkyphat.WIDTH, inkyphat.HEIGHT), fill=inkyphat.BLACK)
-    font = inkyphat.ImageFont.truetype(inkyphat.fonts.FredokaOne, 12)
+    inkyphat.rectangle((0, 0, inkyphat.WIDTH, inkyphat.HEIGHT), fill=inkyphat.WHITE)
+    font = inkyphat.ImageFont.truetype(inkyphat.fonts.FredokaOne, 14)
 
     offset_x, offset_y = 10, 0
     for text in data:
-        inkyphat.text((offset_x, offset_y), text, inkyphat.WHITE, font=font)
+        inkyphat.text((offset_x, offset_y), text, inkyphat.BLACK, font=font)
         offset_y += font.getsize(text)[1] + 2
     inkyphat.show()
     return
 
 
-if __name__ == '__summary__':
+if __name__ == '__main__':
     display_inky()
