@@ -21,12 +21,14 @@ def auth_sunsynk():
     else:
         return False
 
-def stats_sunsynk(headers):
+def stats_sunsynk(token):
+    headers = {'Authorization': f'Bearer {token}'}
     today = datetime.utcnow().strftime("%Y-%m-%d")
     r = requests.get(currentstats+today, headers=headers)
+    # return r.json()
     logging.info(f"Battery - {r.json()['data']['soc']} %")
     logging.info(f"Grid Use - {r.json()['data']['gridOrMeterPower']} W")
-    return {'battery':r.json()['data']['soc'], 'grid':r.json()['data']['gridOrMeterPower']}
+    return {'battery':r.json()['data']['soc'], 'grid':r.json()['data']['gridOrMeterPower']/1000,'export':r.json()['data']['toGrid']}
 
 
 def auth_octopus():
@@ -100,8 +102,7 @@ def summary():
     tokens = get_enphase_tokens()
     sstoken = auth_sunsynk()
     if sstoken:
-        headers = {'Authorization': f'Bearer {sstoken}'}
-        battery = stats_sunsynk(headers)
+        battery = stats_sunsynk(sstoken)
     tokens = get_enphase_tokens()
     panels = enphase_summary(token=tokens['token'])
     if not panels:

@@ -7,23 +7,36 @@
 {% block content %}
 <table class="table">
   <tr>
-    <td>Battery</td>
+    <td>
+      <i class="fa-solid
+      {% if battery.battery <20 %}
+      fa-battery-empty
+      {% elif battery.battery <35 %}
+      fa-battery-quarter
+      {% elif battery.battery <65 %}
+      fa-battery-half
+      {% elif battery.battery <80%}
+      fa-battery-three-quarters
+      {% else %}
+      fa-battery-full
+      {% endif %}
+      "></i>
+    </td>
     <td>{{battery.battery}} %</td>
   </tr>
   <tr>
-    <td>Grid Used</td>
+    <td><i class="fa-solid fa-plug"></i>
+    {% if battery.export%}<i class="fa-solid fa-arrow-right"></i>{%else%}<i class="fa-solid fa-arrow-left"></i>{%endif%}</td>
     <td>{{battery.grid}} KWh</td>
   </tr>
   <tr>
-    <td>Production</td>
-    <td>{{panels.today}} KWh</td>
+    <td><i class="fa-solid fa-solar-panel"></i></td>
+    <td>{{panels.today}} KWh <br/>
+        {{panels.current}} KW</td>
+
   </tr>
   <tr>
-    <td>Current</td>
-    <td>{{panels.current}} KW</td>
-  </tr>
-  <tr>
-    <td>Export</td>
+    <td><i class="fa-solid fa-piggy-bank"></i></td>
     <td>{{exported}} KWh</td>
   </tr>
 </table>

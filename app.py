@@ -14,6 +14,13 @@ def index():
     #     return redirect(url_for('set_key'))
     return render_template('index.html', battery=battery, panels=panels, exported=exported)
 
+@app.route('/demo/')
+def demo():
+    # battery, panels, exported = summary()
+    # if not panels:
+    #     return redirect(url_for('set_key'))
+    return render_template('index.html', battery={"battery":10, "grid":100,'export':True}, panels={"today":300,"current":0.1}, exported=4.1)
+
 @app.route('/key/', methods=('GET', 'POST'))
 def set_key():
     global enphase_key
