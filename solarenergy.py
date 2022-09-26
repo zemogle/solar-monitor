@@ -118,10 +118,16 @@ def display_inky():
     import inkyphat
     battery, panels, exported = summary()
 
+    verb = ""
+    if battery['export']:
+        verb = "Export"
+    else:
+        verb = "Use"
     data = [
         f"Battery {battery['battery']} %",
-        f"Grid Use {battery['grid']} KW",
-        f"Export {exported} KWh"
+        f"Grid {verb} {battery['grid']} KW",
+        f"Export {exported} KWh",
+        f"{datetime.now()}"
     ]
 
     inkyphat.set_colour("black")
