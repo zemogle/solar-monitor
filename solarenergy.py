@@ -86,7 +86,7 @@ def enphase_summary(token):
     r = requests.get(summaryurl, headers=headers)
     if r.status_code != 200:
         logging.error(r.content)
-        return False
+        return {'today':"N/A", 'current' :"Rate limited" }
     logging.info(f"Production today {r.json()['energy_today']/1000:.2f} KWh")
     logging.info(f"Current power {r.json()['current_power']/1000:.2f} KW")
     return {'today':r.json()['energy_today']/1000, 'current' : r.json()['current_power']/1000}
@@ -98,18 +98,21 @@ def enphase_aggregate(token):
     logging.info(r.json())
     return
 
-def summary():
+def summary(panels=False):
     tokens = get_enphase_tokens()
     sstoken = auth_sunsynk()
     if sstoken:
         battery = stats_sunsynk(sstoken)
     tokens = get_enphase_tokens()
-    panels = enphase_summary(token=tokens['token'])
-    if not panels:
-        tokens = auth_enphase(refresh_token=tokens['refresh'])
-        panels = enphase_summary(token=tokens['token'])
+    if panels:
+        panelsummary = enphase_summary(token=tokens['token'])
+        if not panelsummary:
+            tokens = auth_enphase(refresh_token=tokens['refresh'])
+            panelsummary = enphase_summary(token=tokens['token'])
+    else:
+        panelsummary = {'today':'N/A', 'current':'N/A'}
     exported = auth_octopus()
-    return battery, panels, exported
+    return battery, panelsummary, exported
 
 def display_inky():
     import inkyphat
@@ -118,8 +121,6 @@ def display_inky():
     data = [
         f"Battery {battery['battery']} %",
         f"Grid Use {battery['grid']} KW",
-        f"Current {panels['current']} KW",
-        f"Total {panels['today']} KWh",
         f"Export {exported} KWh"
     ]
 
@@ -127,7 +128,7 @@ def display_inky():
     inkyphat.set_border(inkyphat.BLACK)
     inkyphat.set_rotation(180)
     inkyphat.rectangle((0, 0, inkyphat.WIDTH, inkyphat.HEIGHT), fill=inkyphat.WHITE)
-    font = inkyphat.ImageFont.truetype(inkyphat.fonts.FredokaOne, 14)
+    font = inkyphat.ImageFont.truetype(inkyphat.fonts.FredokaOne, 16)
 
     offset_x, offset_y = 10, 0
     for text in data:

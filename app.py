@@ -9,7 +9,7 @@ enphase_key = ''
 
 @app.route('/')
 def index():
-    battery, panels, exported = summary()
+    battery, panels, exported = summary(panels=True)
     # if not panels:
     #     return redirect(url_for('set_key'))
     return render_template('index.html', battery=battery, panels=panels, exported=exported)
