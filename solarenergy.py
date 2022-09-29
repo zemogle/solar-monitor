@@ -147,10 +147,19 @@ def display_inky():
     inkyphat.show()
     return
 
-def battery_display(size):
-    number = round(size/100 * 32)
-    hue = int(size) % 360
-    return number, hue
+def battery_display(battery['battery']):
+    number = round(battery['battery']/100 * 32)
+    if battery['battery'] < 20:
+        colour = (231, 76, 60)
+    elif battery['battery'] < 30:
+        colour = (241, 196, 15)
+    elif battery['battery'] < 60:
+        colour = (93, 173, 226)
+    elif battery['battery'] < 80:
+        colour = (118, 215, 196)
+    else:
+        colour = (34, 153, 84)
+    return number, colour
 
 def unicorn():
     import unicornhat as uh
@@ -158,26 +167,24 @@ def unicorn():
         sstoken = auth_sunsynk()
         if sstoken:
             battery = stats_sunsynk(sstoken)
-        number, hue = battery_display(battery['battery'])
-
+        number, colour = battery_display(battery)
+        r,g,b = colour
         uh.set_layout(uh.PHAT)
         uh.brightness(0.5)
         spacing = 360.0 / 16.0
         uh.clear()
         for x in range(8):
-            offset = x * spacing
-            h = ((hue + offset) % 360) / 360.0
-            r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
+            # offset = x * spacing
+            # h = ((hue + offset) % 360) / 360.0
             for y in range(4):
                 uh.set_pixel(x, y, r, g, b)
                 if (x*4 +y) == number:
-                    print(x,y, x*4 +y, number)
                     break
             else:
                 continue
             break
         uh.show()
-        time.sleep(10)
+        time.sleep(600)
 
 
 if __name__ == '__main__':
