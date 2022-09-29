@@ -170,8 +170,8 @@ def unicorn():
             r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
             for y in range(4):
                 uh.set_pixel(x, y, r, g, b)
-                print(x,y, x*4 +y, number)
-                if ((x+1)*(y+1)) == number:
+                if (x*4 +y) == number:
+                    print(x,y, x*4 +y, number)
                     break
             else:
                 continue
