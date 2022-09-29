@@ -6,6 +6,7 @@ import json
 import time
 import colorsys
 import argparse
+import time
 
 import logging
 
@@ -153,26 +154,26 @@ def battery_display(size):
 
 def unicorn():
     import unicornhat as uh
+    while True:
+        sstoken = auth_sunsynk()
+        if sstoken:
+            battery = stats_sunsynk(sstoken)
+        number, hue = battery_display(battery['battery']/100)
 
-    sstoken = auth_sunsynk()
-    if sstoken:
-        battery = stats_sunsynk(sstoken)
-    number, hue = battery_display(battery['battery']/100)
-
-    uh.set_layout(uh.PHAT)
-    uh.brightness(0.5)
-    spacing = 360.0 / 16.0
-
-    for x in range(8):
-        offset = x * spacing
-        h = ((hue + offset) % 360) / 360.0
-        r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
-        for y in range(4):
-            uh.set_pixel(x, y, r, g, b)
-            if ((x+1)*(y+1)) == number:
-                continue
-    uh.show()
-    return
+        uh.set_layout(uh.PHAT)
+        uh.brightness(0.5)
+        spacing = 360.0 / 16.0
+        uh.clear()
+        for x in range(8):
+            offset = x * spacing
+            h = ((hue + offset) % 360) / 360.0
+            r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
+            for y in range(4):
+                uh.set_pixel(x, y, r, g, b)
+                if ((x+1)*(y+1)) == number:
+                    continue
+        uh.show()
+        time.sleep(10)
 
 
 if __name__ == '__main__':
