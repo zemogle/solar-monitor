@@ -177,8 +177,8 @@ def unicorn():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Battery and Power monitor')
-    my_parser.add_argument('-i', '--inky', action='store_true', help='eInk display')
-    my_parser.add_argument('-u', '--unicorn', action='store_true', help='Unicorn pHat display')
+    parser.add_argument('-i', '--inky', action='store_true', help='eInk display')
+    parser.add_argument('-u', '--unicorn', action='store_true', help='Unicorn pHat display')
     args = parser.parse_args()
     if args.inky:
         display_inky()
