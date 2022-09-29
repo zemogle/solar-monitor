@@ -147,7 +147,7 @@ def display_inky():
     inkyphat.show()
     return
 
-def battery_display(battery['battery']):
+def battery_display(battery):
     number = round(battery['battery']/100 * 32)
     if battery['battery'] < 20:
         colour = (231, 76, 60)
