@@ -148,7 +148,7 @@ def display_inky():
     return
 
 def battery_display(size):
-    number = round(size * 32)
+    number = round(size/100 * 32)
     hue = int(size) % 360
     return number, hue
 
@@ -158,7 +158,7 @@ def unicorn():
         sstoken = auth_sunsynk()
         if sstoken:
             battery = stats_sunsynk(sstoken)
-        number, hue = battery_display(battery['battery']/100)
+        number, hue = battery_display(battery['battery'])
 
         uh.set_layout(uh.PHAT)
         uh.brightness(0.5)
@@ -170,8 +170,11 @@ def unicorn():
             r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
             for y in range(4):
                 uh.set_pixel(x, y, r, g, b)
+                print(x,y, x*4 +y, number)
                 if ((x+1)*(y+1)) == number:
-                    continue
+                    break
+            else:
+                continue
         uh.show()
         time.sleep(10)
 
