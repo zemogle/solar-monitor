@@ -3,6 +3,9 @@ import secret_values as secrets
 from datetime import datetime, timedelta
 from base64 import b64encode
 import json
+import time
+import colorsys
+import argparse
 
 import logging
 
@@ -143,6 +146,41 @@ def display_inky():
     inkyphat.show()
     return
 
+def battery_display(size):
+    number = round(size * 32)
+    hue = int(size) % 360
+    return number, hue
+
+def unicorn():
+    import unicornhat as uh
+
+    sstoken = auth_sunsynk()
+    if sstoken:
+        battery = stats_sunsynk(sstoken)
+    number, hue = battery_display(battery['battery']/100)
+
+    uh.set_layout(uh.PHAT)
+    uh.brightness(0.5)
+    spacing = 360.0 / 16.0
+
+    for x in range(8):
+        offset = x * spacing
+        h = ((hue + offset) % 360) / 360.0
+        r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
+        for y in range(4):
+            uh.set_pixel(x, y, r, g, b)
+            if ((x+1)*(y+1)) == number:
+                continue
+    uh.show()
+    return
+
 
 if __name__ == '__main__':
-    display_inky()
+    parser = argparse.ArgumentParser(description = 'Battery and Power monitor')
+    my_parser.add_argument('-i', '--inky', action='store_true', help='eInk display')
+    my_parser.add_argument('-u', '--unicorn', action='store_true', help='Unicorn pHat display')
+    args = parser.parse_args()
+    if args.inky:
+        display_inky()
+    if args.unicorn:
+        unicorn()
