@@ -175,6 +175,7 @@ def unicorn():
                     break
             else:
                 continue
+            break
         uh.show()
         time.sleep(10)
 
