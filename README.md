@@ -29,6 +29,20 @@ cd solar-monitor
 pip install -r requirements.txt
 ```
 
+**Important** You will need a copy of the `secret_values.py` file, which needs to have:
+
+```
+enphase_api_key = ""
+enphase_client_id = ""
+enphase_client_secret = ""
+enphase_system_id = ""
+octopus_key = ""
+octopus_mpan = ""
+octopus_serial = ""
+username = "SunSynk username"
+password = "SunSynk password"
+```
+
 If `pip` is not installed, install with `sudo apt install python3-pip`
 
 ### Install Nginx
@@ -84,4 +98,27 @@ Start the service with `sudo systemctl start solarmonitor.service` and add it to
 
 ```
 sudo systemctl enable solarmonitor.service
+```
+
+# Unicorn PHAT
+
+We will use `systemd` to manage starting the site up on reboot. In the folder:
+
+```
+/usr/lib/systemd/system
+```
+
+create a file called `battery.service` and add this to it:
+
+```
+[Unit]
+Description=battery Monitor
+After=multi-user.target
+
+[Service]
+WorkingDirectory=/home/pi/solar-monitor
+ExecStart=battery.sh -u &
+
+[Install]
+WantedBy=multi-user.target
 ```
