@@ -28,8 +28,11 @@ def auth_sunsynk():
 def stats_sunsynk(token):
     headers = {'Authorization': f'Bearer {token}'}
     today = datetime.utcnow().strftime("%Y-%m-%d")
-    r = requests.get(currentstats+today, headers=headers)
-    # return r.json()
+    try:
+        r = requests.get(currentstats+today, headers=headers)
+    except requests.exceptions.ConnectionError:
+        logging.error('Too many connections')
+        return {'battery':0, 'grid':0,'export':0}
     logging.info(f"Battery - {r.json()['data']['soc']} %")
     logging.info(f"Grid Use - {r.json()['data']['gridOrMeterPower']} W")
     return {'battery':r.json()['data']['soc'], 'grid':r.json()['data']['gridOrMeterPower']/1000,'export':r.json()['data']['toGrid']}
