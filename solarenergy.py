@@ -151,18 +151,26 @@ def display_inky():
     return
 
 def battery_display(battery):
+    rainbow = False
     number = round(battery['battery']/100 * 32)
-    if battery['battery'] < 20:
-        colour = (231, 76, 60)
-    elif battery['battery'] < 30:
-        colour = (241, 196, 15)
-    elif battery['battery'] < 60:
-        colour = (93, 173, 226)
-    elif battery['battery'] < 80:
-        colour = (118, 215, 196)
+
+    if battery['export'] and battery['grid'] > 0.5:
+        rainbow = True
+        colour = 0
     else:
-        colour = (34, 153, 84)
-    return number, colour
+        if battery['battery'] < 20 or
+           (battery['battery'] < 50 and not battery['export'] and battery['grid'] < 0.1):
+            colour = (231, 76, 60)
+        elif battery['battery'] < 30 and not battery['export'] and battery['grid'] < 0.1:
+            colour = (241, 196, 15)
+        elif battery['battery'] < 60:
+            colour = (93, 173, 226)
+        elif battery['battery'] < 80:
+            colour = (118, 215, 196)
+        else:
+            colour = (34, 153, 84)
+
+    return number, colour, rainbow
 
 def unicorn():
     import unicornhat as uh
@@ -170,15 +178,18 @@ def unicorn():
         sstoken = auth_sunsynk()
         if sstoken:
             battery = stats_sunsynk(sstoken)
-        number, colour = battery_display(battery)
-        r,g,b = colour
+        number, colour, rainbow = battery_display(battery)
+        if not rainbow:
+            r,g,b = colour
         uh.set_layout(uh.PHAT)
         uh.brightness(0.5)
         spacing = 360.0 / 16.0
         uh.clear()
         for x in range(8):
-            # offset = x * spacing
-            # h = ((hue + offset) % 360) / 360.0
+            if rainbow:
+                offset = x * spacing
+                h = ((hue + offset) % 360) / 360.0
+                r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
             for y in range(4):
                 uh.set_pixel(x, y, r, g, b)
                 if (x*4 +y) == number:
