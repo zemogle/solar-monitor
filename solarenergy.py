@@ -158,8 +158,7 @@ def battery_display(battery):
         rainbow = True
         colour = 0
     else:
-        if battery['battery'] < 20 or
-           (battery['battery'] < 50 and not battery['export'] and battery['grid'] < 0.1):
+        if battery['battery'] < 20 or (battery['battery'] < 50 and not battery['export'] and battery['grid'] < 0.1):
             colour = (231, 76, 60)
         elif battery['battery'] < 30 and not battery['export'] and battery['grid'] < 0.1:
             colour = (241, 196, 15)
