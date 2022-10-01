@@ -187,7 +187,7 @@ def unicorn():
         for x in range(8):
             if rainbow:
                 offset = x * spacing
-                h = ((hue + offset) % 360) / 360.0
+                h = ((colour + offset) % 360) / 360.0
                 r, g, b = [int(c * 255) for c in colorsys.hsv_to_rgb(h, 1.0, 1.0)]
             for y in range(4):
                 uh.set_pixel(x, y, r, g, b)
