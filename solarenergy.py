@@ -47,8 +47,8 @@ def auth_octopus():
     if not r.status_code == 200:
         return False
     try:
-        logging.info(f"Yesterday export - {r.json()['results'][1]['consumption']} KWh")
-        return r.json()['results'][1]['consumption']
+        logging.info(f"Yesterday export - {r.json()['results'][0]['consumption']} KWh")
+        return r.json()['results'][0]['consumption']
     except IndexError:
         return "API error"
 
@@ -134,7 +134,7 @@ def display_inky():
         f"Battery {battery['battery']} %",
         f"Grid {verb} {battery['grid']} KW",
         f"Export {exported} KWh",
-        f"{datetime.now()}"
+        f"{datetime.now().strftime("%-d %b %H:%M")}"
     ]
 
     inkyphat.set_colour("black")
@@ -146,7 +146,7 @@ def display_inky():
     offset_x, offset_y = 10, 0
     for text in data:
         inkyphat.text((offset_x, offset_y), text, inkyphat.BLACK, font=font)
-        offset_y += font.getsize(text)[1] + 2
+        offset_y += font.getlength(text)[1] + 2
     inkyphat.show()
     return
 
@@ -204,8 +204,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Battery and Power monitor')
     parser.add_argument('-i', '--inky', action='store_true', help='eInk display')
     parser.add_argument('-u', '--unicorn', action='store_true', help='Unicorn pHat display')
+    parser.add_argument('-t', '--term', action='store_true', help='Terminal output only')
     args = parser.parse_args()
-    if args.inky:
+    if args.term:
+        summary()
+    elif args.inky:
         display_inky()
-    if args.unicorn:
+    elif args.unicorn:
         unicorn()
