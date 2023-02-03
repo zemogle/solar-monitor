@@ -146,7 +146,7 @@ def display_inky():
     offset_x, offset_y = 10, 0
     for text in data:
         inkyphat.text((offset_x, offset_y), text, inkyphat.BLACK, font=font)
-        offset_y += font.getlength(text)[1] + 2
+        offset_y += font.getsize(text)[1] + 2
     inkyphat.show()
     return
 
