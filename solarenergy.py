@@ -134,7 +134,7 @@ def display_inky():
         f"Battery {battery['battery']} %",
         f"Grid {verb} {battery['grid']} KW",
         f"Export {exported} KWh",
-        f"{datetime.now().strftime("%-d %b %H:%M")}"
+        f"{datetime.now().strftime('%-d %b %H:%M')}"
     ]
 
     inkyphat.set_colour("black")
